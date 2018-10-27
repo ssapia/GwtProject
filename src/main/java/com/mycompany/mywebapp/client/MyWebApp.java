@@ -1,21 +1,17 @@
 package com.mycompany.mywebapp.client;
 
-import com.mycompany.mywebapp.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.*;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
+import com.mycompany.mywebapp.client.user.UserRequest;
+import com.mycompany.mywebapp.shared.FieldVerifier;
+import com.mycompany.mywebapp.shared.user.User;
+
+import java.util.List;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -26,18 +22,29 @@ public class MyWebApp implements EntryPoint {
    * returns an error.
    */
   private static final String SERVER_ERROR = "An error occurred while "
-      + "attempting to contact the server. Please check your network "
-      + "connection and try again.";
+          + "attempting to contact the server. Please check your network "
+          + "connection and try again.";
 
   /**
    * Create a remote service proxy to talk to the server-side Greeting service.
    */
   private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
+//  private List<User> request;
+
+  private List<User> request;
+
   /**
    * This is the entry point method.
    */
   public void onModuleLoad() {
+
+    try {
+      request = new UserRequest().request();
+    } catch (RequestException e) {
+    }
+
+
     final Button sendButton = new Button("Send");
     final TextBox nameField = new TextBox();
     nameField.setText("GWT User");
@@ -90,7 +97,7 @@ public class MyWebApp implements EntryPoint {
        * Fired when the user clicks on the sendButton.
        */
       public void onClick(ClickEvent event) {
-        sendNameToServer();
+        parseData();
       }
 
       /**
@@ -98,7 +105,7 @@ public class MyWebApp implements EntryPoint {
        */
       public void onKeyUp(KeyUpEvent event) {
         if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-          sendNameToServer();
+//          parseData();
         }
       }
 
@@ -113,7 +120,7 @@ public class MyWebApp implements EntryPoint {
           errorLabel.setText("Please enter at least four characters");
           return;
         }
-        
+
         // Then, we send the input to the server.
         sendButton.setEnabled(false);
         textToServerLabel.setText(textToServer);
@@ -144,4 +151,64 @@ public class MyWebApp implements EntryPoint {
     sendButton.addClickHandler(handler);
     nameField.addKeyUpHandler(handler);
   }
+
+  private void parseData() {
+
+      for (User user : request) {
+        Window.alert("Hello, " + user.getFirstName());
+      }
+
+//
+//    String userst = "";
+//
+//    for (User user : request) {
+//      userst += user.getFirstName() + user.getLastName() + "<br>";
+//    }
+//
+//    Window.alert("usuarios"+ request.size() + userst);
+  }
+//  private void parseData() {
+//    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "/json");
+//    try {
+//      requestBuilder.sendRequest(null, new RequestCallback() {
+//
+//        @Override
+//        public void onResponseReceived(Request request, Response response) {
+//          UserJs c = MyWebApp.parseJson(response.getText());
+//          Window.alert(c.getFullName());
+//        }
+//
+//        @Override
+//        public void onError(Request request, Throwable exception) {
+//          Window.alert("Some error occurred: " + exception.getMessage());
+//        }
+//
+//      });
+//    } catch (RequestException e) {
+//      e.printStackTrace();
+//    }
+//
+//  }
+//
+//  public static <T extends JavaScriptObject> T parseJson(String jsonStr) {
+//    return JsonUtils.safeEval(jsonStr);
+//  }
+//
+//  static class UserJs extends JavaScriptObject {
+//
+//    // Overlay types always have protected, zero-arg ctors
+//    protected UserJs() {
+//    }
+//
+//    // Typically, methods on overlay types are JSNI
+//    public final native String getFirstName() /*-{ return this.firstName; }-*/;
+//
+//    public final native String getLastName() /*-{ return this.lastName;  }-*/;
+//
+//    // Note, though, that methods aren't required to be JSNI
+//    public final String getFullName() {
+//      return getFirstName() + " " + getLastName();
+//    }
+//
+//  }
 }

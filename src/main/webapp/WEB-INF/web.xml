@@ -21,4 +21,13 @@
     <welcome-file>MyWebApp.html</welcome-file>
   </welcome-file-list>
 
+  <servlet>
+
+    <servlet-name>json</servlet-name>
+    <!--async-supported>true</async-supported-->
+    <servlet-class>com.mycompany.mywebapp.servlet.MyWebAppServlet</servlet-class>
+
+  </servlet>
+
+
 </web-app>
