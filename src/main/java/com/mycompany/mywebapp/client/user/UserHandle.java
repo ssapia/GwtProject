@@ -3,21 +3,24 @@ package com.mycompany.mywebapp.client.user;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.*;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.mycompany.mywebapp.shared.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRequest {
+public class UserHandle {
 
     RequestBuilder requestBuilder;
+    Command command;
 
-    public UserRequest() {
-        requestBuilder = new RequestBuilder(RequestBuilder.GET, "/json");
+    public UserHandle(Command command) {
+        this.command = command;
+        this.requestBuilder = new RequestBuilder(RequestBuilder.GET, "/json");
     }
 
-    public List<User> request() throws RequestException {
+    public List<User> handleResponse() throws RequestException {
 
         List<User> users = new ArrayList<>();
 
@@ -32,6 +35,7 @@ public class UserRequest {
                     users.add(c.get(i));
                 }
 
+                command.execute();
             }
 
             @Override
